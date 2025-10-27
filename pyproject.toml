@@ -1,50 +1,58 @@
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools-scm[toml]>=6.2"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "maq-rai-sdk"
-version = "0.0.0"
-description = "RAI Package contains a Prompt Reviewer and Updater and test case generator for faster Copilot Development"
+version = "0.1.1"
+description = "A Python SDK for reviewing and updating prompts, and generating test cases for faster Copilot development with comprehensive Responsible AI (RAI) compliance."
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
-    {name = "MAQ Software", email = "register@maqsoftware.com"}
+    {name = "MAQ Software", email = "customersuccess@maqsoftware.com"}
 ]
-maintainers = [
-    {name = "MAQ Software", email = "register@maqsoftware.com"}
-]
+keywords = ["ai", "responsible-ai", "prompt-engineering", "testing", "compliance"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Testing"
 ]
-keywords = ["ai", "copilot", "prompt", "testing", "rai", "agent"]
 requires-python = ">=3.10,<3.13"
 dependencies = [
-    "crewai[tools]==0.120.1",
-    "types-PyYAML==6.0.12.20250516",
-    "PyYAML==6.0.2",
-    "onnxruntime==1.22.0",
+    "crewai[tools]>=0.120.1",
+    "types-PyYAML>=6.0.12.20250516", 
+    "PyYAML>=6.0.2",
+    "onnxruntime>=1.22.0",
+    "openai>=1.0.0",
+    "pydantic-core>=2.41.4",
+    "python-dotenv"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov",
+    "black",
+    "isort",
+    "flake8",
+    "mypy"
 ]
 
 [project.urls]
-Homepage = "https://github.com/MAQ-Software-Solutions/maqraisdk"
-Repository = "https://github.com/MAQ-Software-Solutions/maqraisdk"
-Documentation = "https://github.com/MAQ-Software-Solutions/maqraisdk"
-"Bug Reports" = "https://github.com/MAQ-Software-Solutions/maqraisdk/issues"
+"Homepage" = "https://github.com/MAQ-Software-Solutions/maqraisdk"
+"Bug Tracker" = "https://github.com/MAQ-Software-Solutions/maqraisdk/issues"
+"Documentation" = "https://github.com/MAQ-Software-Solutions/maqraisdk"
 
 [tool.setuptools.packages.find]
-where = ["SDK_Creation"]
+where = ["."]
+include = ["maqraisdk*"]
 
-[tool.setuptools.package-data]
-"rai_agent_sdk" = ["config/*.yaml", "py.typed"]
-
-[tool.setuptools]
-include-package-data = true
+[tool.setuptools.package-dir]
+maqraisdk = "rai_agent"
