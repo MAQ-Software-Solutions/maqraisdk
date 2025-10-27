@@ -9,6 +9,181 @@ A Python SDK for reviewing and updating prompts, and generating test cases for f
 - Support for various user categories and metrics
 - RAI compliance across Groundedness, XPIA, Jailbreak Prevention, and Harmful Content Prevention
 
+## Prerequisites and Deployment Guide
+
+Before using the MAQ RAI SDK, follow these step-by-step instructions to set up the required Azure resources.
+
+### Step 1: Azure Subscription Setup
+
+#### 1.1 Request OpenAI Quota Increase
+
+**Via Azure AI Foundry:**
+1. Navigate to [Azure AI Foundry](https://ai.azure.com)
+2. Sign in with your Azure credentials
+3. Go to **Model quota** section
+4. Request a quota increase for GPT-4.1 to meet the minimum requirement of **50,000 TPM (Tokens Per Minute)**
+
+![OpenAI Quota Request](./documentation-assets/openai-quota.png)
+
+**Note**: Quota approval may take some time. Ensure you have sufficient quota before proceeding with deployment.
+
+#### 1.2 Register Required Resource Providers
+
+**Via Azure Portal:**
+1. In your subscription page, click on **Resource providers** in the left menu
+2. Register the following providers by searching for each and clicking **Register**:
+   - `Microsoft.Web` (for Azure Functions and App Service)
+   - `Microsoft.CognitiveServices` (for OpenAI services)
+   - `Microsoft.Storage` (for storage accounts)
+   - `Microsoft.Insights` (for Application Insights)
+   - `Microsoft.OperationalInsights` (for Log Analytics)
+
+![Resource Provider Registration](./documentation-assets/resource-provider-registration.jpg)
+
+**Verification**: Ensure all providers show "Registered" status before proceeding.
+
+### Step 2: Create Azure OpenAI Service
+
+#### 2.1 Navigate to Azure OpenAI Service Creation
+
+1. In the Azure Portal, search for "Azure OpenAI" in the top search bar
+2. Select **Azure OpenAI** from the results
+3. Click **+ Create** to start creating a new OpenAI service
+
+#### 2.2 Configure OpenAI Service
+
+**Basic Settings:**
+- **Subscription**: Select your subscription
+- **Resource Group**: Create new or select existing resource group
+- **Region**: Choose **East US 2** or **West US** (recommended for GPT-4.1 availability)
+- **Name**: Enter a unique name (e.g., `rai-openai-service-[yourname]`)
+- **Pricing Tier**: Select **Standard S0**
+
+**Networking**: Leave as default (All networks)
+
+**Tags**: Optional - add tags for resource management
+
+Click **Review + Create** and then **Create**.
+
+#### 2.3 Deploy GPT-4.1 Model
+
+1. Once the OpenAI service is created, navigate to your OpenAI resource
+2. In the left menu, click on **Model deployments**
+3. Click **+ Create** to create a new deployment
+4. Configure the deployment:
+   - **Model**: Select **gpt-4.1** (latest version available)
+   - **Model Version**: Select **2025-04-14** or latest available
+   - **Deployment Name**: Enter `gpt-41-deployment`
+   - **Content Filter**: Default
+   - **Tokens per Minute Rate Limit**: Set to **50,000** (minimum required)
+
+![OpenAI Quota Configuration](./documentation-assets/openai-quota.png)
+
+5. Click **Create** to deploy the model
+
+**Important**: Note down the following information for later use:
+- OpenAI Service Endpoint URL
+- API Key (found in Keys and Endpoint section)
+- Deployment Name
+- API Version: Use `2025-02-01-preview`
+
+### Step 3: Deploy RAI Agent SDK via Azure Marketplace
+
+#### 3.1 Navigate to Azure Marketplace Offer
+
+1. Click on this direct link to access the RAI Agent marketplace offer:
+   **[RAI Agent (Preview) - Azure Marketplace](https://portal.azure.com/#create/maqsoftware.rai_agent-previewfree)**
+
+2. Alternatively, you can:
+   - Navigate to Azure Portal → **Marketplace**
+   - Search for "RAI Agent" 
+   - Select **RAI Agent (preview)** by MAQ Software
+
+![Azure Marketplace Offer](./documentation-assets/azure-marketplace-offer.png)
+
+#### 3.2 Configure RAI Agent Deployment
+
+1. On the marketplace offer page, click **Create**
+2. Select your **Subscription** from the dropdown
+3. The resource creation page will appear with multiple resource configurations:
+
+![Resource Creation Page](./documentation-assets/resource-creation-page.png)
+
+#### 3.3 Configure Resource Details
+
+Fill in the following details (you can customize names as needed):
+
+**Project Details:**
+- **Subscription**: Select your subscription
+- **Resource Group**: Create new or select existing
+
+**Instance Details:**
+- **Region**: Select **East US** (or same region as your OpenAI service)
+- **Function App Name**: Enter your desired name (e.g., `rai-agent-func-app`)
+- **Application Insights Name**: Enter your desired name (e.g., `rai-agent-insights`)
+- **Log Analytics Workspace Name**: Enter your desired name (e.g., `rai-agent-logs`)
+- **Hosting Plan Name**: Enter your desired name (e.g., `rai-agent-hosting`)
+- **Storage Account Name**: Enter your desired name (e.g., `raiagentstorageacct`)
+- **Package URI**: **⚠️ CRITICAL - DO NOT CHANGE THIS VALUE**
+
+**Managed Application Details:**
+- **Application Name**: Enter your desired application name
+- **Managed Resource Group**: Use the auto-generated name or customize
+
+#### 3.4 Review and Create
+
+1. Click **Next** to review your configuration
+2. Verify all settings are correct
+3. Click **Review + Create**
+4. After validation passes, click **Create**
+
+**Deployment Time**: The deployment typically takes 5-10 minutes to complete.
+
+### Step 4: Configure OpenAI Integration
+
+#### 4.1 Navigate to Function App
+
+1. In the Azure Portal, navigate to **Resource Groups**
+2. Select the resource group where you deployed the RAI Agent
+3. Find and click on the **Function App** resource (name you provided during deployment)
+
+#### 4.2 Configure Application Settings
+
+1. In your Function App, click on **Configuration** in the left menu under **Settings**
+2. Click on **Application settings** tab
+3. Add the following four new application settings by clicking **+ New application setting**:
+
+| Setting Name | Value | Source |
+|--------------|-------|---------|
+| `OpenAI_Key` | Your OpenAI API key | From OpenAI service → Keys and Endpoint |
+| `OpenAI_endpoint` | Your OpenAI endpoint URL | From OpenAI service → Keys and Endpoint |
+| `OpenAI_deployment` | `gpt-41-deployment` | The deployment name you created |
+| `OpenAI_version` | `2025-02-01-preview` | Recommended API version |
+
+#### 4.3 Get OpenAI Service Details
+
+**To find your OpenAI service details:**
+1. Navigate to your Azure OpenAI service resource
+2. Click on **Keys and Endpoint** in the left menu
+3. Copy **KEY 1** for the `OpenAI_Key` setting
+4. Copy **Endpoint** for the `OpenAI_endpoint` setting
+
+#### 4.4 Save Configuration
+
+1. After adding all four settings, click **Save** at the top
+2. Click **Continue** when prompted about restarting the app
+3. Wait for the configuration to be applied (usually 30-60 seconds)
+
+#### 4.5 Verify Deployment
+
+1. In your Function App, click on **Functions** in the left menu
+2. Verify you can see the following functions:
+   - `Reviewer_updater`
+   - `Testcase_generator`
+3. Click on any function and then **Code + Test** to verify it loads without errors
+
+**Your RAI Agent SDK is now deployed and configured!**
+
 ## Installation
 
 ```bash
@@ -17,36 +192,87 @@ pip install maq-rai-sdk
 
 ## Usage
 
+### Option 1: Using the SDK (Python Package)
+
+```bash
+pip install maq-rai-sdk
+```
+
 ```python
-from rai_agent_sdk import RAIAgentSDK
-from azure.core.credentials import AzureKeyCredential
- 
-# Initialize the client
-client = RAIAgentSDK(
-    endpoint="<Your apim endpoint>",
-    credential=AzureKeyCredential("your-key")
+from maqraisdk import PromptReviewer, PromptUpdater, promptTestcaseGenerator, OpenAIClient
+import os
+
+# Initialize OpenAI client with your Azure OpenAI settings
+openai_client = OpenAIClient(
+    key=os.getenv("OPENAI_API_KEY"),
+    openai_endpoint=os.getenv("OPENAI_ENDPOINT"),
+    deployment_name=os.getenv("OPENAI_DEPLOYMENT")
 )
- 
-# Review and update a prompt
-result = client.reviewer.post({
-    "prompt": "Generate a sales forecast for next quarter",
-    "need_metrics": True
-})
-print(result)
+
+# Initialize RAI components
+reviewer = PromptReviewer(openaiClient=openai_client)
+updater = PromptUpdater(openaiClient=openai_client) 
+testcase_generator = promptTestcaseGenerator(openaiClient=openai_client)
+
+# Review a prompt
+review_result = reviewer.review(
+    prompt="Generate a sales forecast for next quarter",
+    verbose=False
+)
+print(review_result)
+
 # Generate test cases
-testcases = client.testcase.generator_post({
-    "prompt": "Validate login functionality",
+test_cases = testcase_generator.generate(
+    prompt="Validate login functionality",
+    num_cases=3,
+    categories=["xpia", "harmful"],
+    verbose=False
+)
+print(test_cases)
+```
+
+### Option 2: Using Function App Endpoints (Direct API)
+
+```python
+import requests
+import json
+
+# Your deployed Function App URL
+function_app_url = "https://your-function-app-name.azurewebsites.net"
+reviewer_url = f"{function_app_url}/api/Reviewer_updater"
+testcase_url = f"{function_app_url}/api/Testcase_generator"
+
+# Review and update a prompt
+reviewer_payload = {
+    "prompt": "Generate a sales forecast for next quarter",
+    "action": "review",
+    "need_metrics": True
+}
+
+response = requests.post(reviewer_url, json=reviewer_payload)
+result = response.json()
+print(result)
+
+# Generate test cases
+testcase_payload = {
+    "prompt": "Validate login functionality", 
     "number_of_testcases": 3,
     "user_categories": ["xpia", "harmful"],
     "need_metrics": True
-})
+}
+
+response = requests.post(testcase_url, json=testcase_payload)
+testcases = response.json()
 print(testcases)
 ```
 
 ## Requirements
 
 - Python 3.10 or higher (< 3.13)
-- API subscription key for the RAI Agent service
+- Azure subscription with appropriate quotas and permissions
+- Azure OpenAI service with GPT-4.1 model (minimum 50,000 TPM)
+- Successfully deployed RAI Agent Function App from Azure Marketplace
+- Configured OpenAI integration settings in Function App
 
 ## API Documentation
 
@@ -320,7 +546,7 @@ MIT License
 
 ## Author
 
-MAQ Software (register@maqsoftware.com)
+MAQ Software (customersuccess@maqsoftware.com)
 
 ## Support
 
