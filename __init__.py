@@ -14,7 +14,7 @@ from .rai_agent.utility.promptReviewer import PromptReviewer
 from .rai_agent.utility.promptUpdater import PromptUpdater
 from .rai_agent.utility.promptTestcaseGenerator import promptTestcaseGenerator
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "OpenAIClient",

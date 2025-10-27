@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "maq-rai-sdk"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Python SDK for reviewing and updating prompts, and generating test cases for faster Copilot development with comprehensive Responsible AI (RAI) compliance."
 readme = "README.md"
 license = "MIT"
