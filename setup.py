@@ -18,20 +18,20 @@ Attributes:
 from setuptools import setup, find_packages
 
 setup(
-    name="maq-rai-sdk",
-    version="0.0.0",
+    name="maq-rai-sdk_test",
+    version="0.3.8",
     description="RAI Package contains a Prompt Reviewer and Updater and test case generator for faster Copilot Development",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     author="MAQ Software",
-    author_email="register@maqsoftware.com",
+    author_email="customersuccess@maqsoftware.com",
     url="https://github.com/MAQ-Software-Solutions/maqraisdk",
-    packages=find_packages(where="SDK_Creation"),
-    package_dir={"": "SDK_Creation"},
+    packages=find_packages(where="MAQ_RAI_SDK"),
+    package_dir={"": "MAQ_RAI_SDK"},
     include_package_data=True,
     package_data={
-        # Include all yaml files in any config directory under rai_agent_sdk
-        "rai_agent_sdk": ["config/*.yaml", "py.typed"],
+        # Include all yaml files in any config directory under maq_rai_sdk
+        "maq_rai_sdk": ["config/*.yaml", "py.typed"],
     },
     install_requires=[
         "crewai[tools]==0.120.1",
