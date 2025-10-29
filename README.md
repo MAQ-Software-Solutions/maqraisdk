@@ -244,6 +244,9 @@ print(testcases)
 ```
 
 ## Usage 2: Using Function App Endpoints (Direct API)
+![Function App Triggers](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/maq-rai-dev2/documentation-assets/function-app-triggers.png)
+
+![Get Function URL](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/maq-rai-dev2/documentation-assets/get-function-url.png)
 
 ```python
 import requests
@@ -256,10 +259,6 @@ import json
 # 4. Go to "Code + Test" tab
 # 5. Click "Get function URL" button at the top
 # 6. Copy the "default (Function key)" URL and paste below
-
-![Function App Triggers](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/maq-rai-dev2/documentation-assets/function-app-triggers.png)
-
-![Get Function URL](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/maq-rai-dev2/documentation-assets/get-function-url.png)
 
 reviewer_url = "<paste_reviewer_trigger_url_here>"
 testcase_url = "<paste_testcase_generator_trigger_url_here>"
