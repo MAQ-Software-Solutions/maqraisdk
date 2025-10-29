@@ -244,9 +244,9 @@ print(testcases)
 ```
 
 ## Usage 2: Using Function App Endpoints (Direct API)
-![Function App Triggers](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/maq-rai-dev2/documentation-assets/function-app-triggers.png)
+![Function App Triggers](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/master/documentation-assets/function-app-triggers.png)
 
-![Get Function URL](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/maq-rai-dev2/documentation-assets/get-function-url.png)
+![Get Function URL](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/master/documentation-assets/get-function-url.png)
 
 ```python
 import requests
