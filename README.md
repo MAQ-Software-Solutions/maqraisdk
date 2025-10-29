@@ -23,7 +23,7 @@ Before using the MAQ RAI SDK, follow these step-by-step instructions to set up t
 3. Go to **Model quota** section
 4. Request a quota increase for your preferred LLM model (we recommend GPT-4.1) to meet the minimum requirement of **50,000 TPM (Tokens Per Minute)**
 
-![OpenAI Quota Request](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/master/documentation-assets/openai-quota.png)
+![OpenAI Quota Request](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/main/documentation-assets/openai-quota.png)
 
 **Note**: Quota approval may take some time. Ensure you have sufficient quota before proceeding with deployment.
 
@@ -38,7 +38,7 @@ Before using the MAQ RAI SDK, follow these step-by-step instructions to set up t
    - `Microsoft.Insights` (for Application Insights)
    - `Microsoft.OperationalInsights` (for Log Analytics)
 
-![Resource Provider Registration](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/master/documentation-assets/resource-provider-registration.jpg)
+![Resource Provider Registration](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/main/documentation-assets/resource-provider-registration.jpg)
 
 **Verification**: Ensure all providers show "Registered" status before proceeding.
 
@@ -77,7 +77,7 @@ Click **Review + Create** and then **Create**.
    - **Content Filter**: Default
    - **Tokens per Minute Rate Limit**: Set to **50,000** (minimum required)
 
-![OpenAI Quota Configuration](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/master/documentation-assets/openai-quota.png)
+![OpenAI Quota Configuration](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/main/documentation-assets/openai-quota.png)
 
 5. Click **Create** to deploy the model
 
@@ -99,7 +99,7 @@ Click **Review + Create** and then **Create**.
    - Search for "RAI Agent" 
    - Select **RAI Agent (preview)** by MAQ Software
 
-![Azure Marketplace Offer](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/master/documentation-assets/azure-marketplace-offer.png)
+![Azure Marketplace Offer](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/main/documentation-assets/azure-marketplace-offer.png)
 
 #### 3.2 Configure RAI Agent Deployment
 
@@ -107,7 +107,7 @@ Click **Review + Create** and then **Create**.
 2. Select your **Subscription** from the dropdown
 3. The resource creation page will appear with multiple resource configurations:
 
-![Resource Creation Page](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/master/documentation-assets/resource-creation-page.png)
+![Resource Creation Page](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/main/documentation-assets/resource-creation-page.png)
 
 #### 3.3 Configure Resource Details
 
@@ -244,9 +244,9 @@ print(testcases)
 ```
 
 ## Usage 2: Using Function App Endpoints (Direct API)
-![Function App Triggers](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/master/documentation-assets/function-app-triggers.png)
+![Function App Triggers](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/main/documentation-assets/function-app-triggers.png)
 
-![Get Function URL](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/master/documentation-assets/get-function-url.png)
+![Get Function URL](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/main/documentation-assets/get-function-url.png)
 
 ```python
 import requests
