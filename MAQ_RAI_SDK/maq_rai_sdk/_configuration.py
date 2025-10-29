@@ -6,7 +6,6 @@
 
 from typing import Any
 
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 VERSION = "unknown"
@@ -18,15 +17,9 @@ class MAQRAISDKConfiguration:  # pylint: disable=too-many-instance-attributes
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
     """
 
-    def __init__(self, credential: AzureKeyCredential, **kwargs: Any) -> None:
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
-
-        self.credential = credential
+    def __init__(self, **kwargs: Any) -> None:
         kwargs.setdefault("sdk_moniker", "maqraisdk/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
@@ -41,7 +34,3 @@ class MAQRAISDKConfiguration:  # pylint: disable=too-many-instance-attributes
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
         self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
-        if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AzureKeyCredentialPolicy(
-                self.credential, "Ocp-Apim-Subscription-Key", **kwargs
-            )

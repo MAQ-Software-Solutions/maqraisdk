@@ -18,8 +18,8 @@ Attributes:
 from setuptools import setup, find_packages
 
 setup(
-    name="maq-rai-sdk",
-    version="0.1.2",
+    name="maq-rai-sdk_test",
+    version="0.3.9",
     description="RAI Package contains a Prompt Reviewer and Updater and test case generator for faster Copilot Development",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
