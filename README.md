@@ -21,7 +21,7 @@ Before using the MAQ RAI SDK, follow these step-by-step instructions to set up t
 1. Navigate to [Azure AI Foundry](https://ai.azure.com)
 2. Sign in with your Azure credentials
 3. Go to **Model quota** section
-4. Request a quota increase for GPT-4.1 to meet the minimum requirement of **50,000 TPM (Tokens Per Minute)**
+4. Request a quota increase for your preferred LLM model (we recommend GPT-4.1) to meet the minimum requirement of **50,000 TPM (Tokens Per Minute)**
 
 ![OpenAI Quota Request](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/master/documentation-assets/openai-quota.png)
 
@@ -65,15 +65,15 @@ Before using the MAQ RAI SDK, follow these step-by-step instructions to set up t
 
 Click **Review + Create** and then **Create**.
 
-#### 2.3 Deploy GPT-4.1 Model
+#### 2.3 Deploy Your LLM Model
 
 1. Once the OpenAI service is created, navigate to your OpenAI resource
 2. In the left menu, click on **Model deployments**
 3. Click **+ Create** to create a new deployment
 4. Configure the deployment:
-   - **Model**: Select **gpt-4.1** (latest version available)
-   - **Model Version**: Select **2025-04-14** or latest available
-   - **Deployment Name**: Enter `gpt-41-deployment`
+   - **Model**: Select your preferred LLM model (we recommend **gpt-4.1** for optimal performance)
+   - **Model Version**: Select the latest available version for your chosen model
+   - **Deployment Name**: Enter a descriptive name (e.g., `my-llm-deployment`)
    - **Content Filter**: Default
    - **Tokens per Minute Rate Limit**: Set to **50,000** (minimum required)
 
@@ -85,7 +85,7 @@ Click **Review + Create** and then **Create**.
 - OpenAI Service Endpoint URL
 - API Key (found in Keys and Endpoint section)
 - Deployment Name
-- API Version: Use `2025-02-01-preview`
+- API Version: Use the latest available version (e.g., `2025-02-01-preview` or newer)
 
 ### Step 3: Deploy RAI Agent SDK via Azure Marketplace
 
@@ -157,8 +157,8 @@ Fill in the following details (you can customize names as needed):
 |--------------|-------|---------|
 | `OpenAI_Key` | Your OpenAI API key | From OpenAI service → Keys and Endpoint |
 | `OpenAI_endpoint` | Your OpenAI endpoint URL | From OpenAI service → Keys and Endpoint |
-| `OpenAI_deployment` | `gpt-41-deployment` | The deployment name you created |
-| `OpenAI_version` | `2025-02-01-preview` | Recommended API version |
+| `OpenAI_deployment` | Your deployment name | The deployment name you created in Step 2.3 |
+| `OpenAI_version` | Latest API version | Use the latest available version (e.g., `2025-02-01-preview`) |
 
 #### 4.3 Get OpenAI Service Details
 
@@ -180,11 +180,32 @@ Fill in the following details (you can customize names as needed):
 2. Verify you can see the following functions:
    - `Reviewer_updater`
    - `Testcase_generator`
-3. Click on any function and then **Code + Test** to verify it loads without errors
 
 **Your RAI Agent SDK is now deployed and configured!**
 
 ## Installation
+
+### Prerequisites (Windows Users)
+
+Before installing the SDK, Windows users need to install Microsoft Visual C++ Build Tools to compile certain dependencies:
+
+1. **Download Microsoft C++ Build Tools**:
+   - Visit: https://visualstudio.microsoft.com/visual-cpp-build-tools/
+   - Click "Download Build Tools"
+
+2. **Install Build Tools**:
+   - Run the downloaded installer
+   - Select "C++ build tools" workload
+   - Ensure "MSVC v143 - VS 2022 C++ x64/x86 build tools" is selected
+   - Click "Install" and wait for completion
+   - Restart your computer after installation
+
+3. **Alternative**: Install Visual Studio Community (includes build tools):
+   - Visit: https://visualstudio.microsoft.com/downloads/
+   - Download and install Visual Studio Community
+   - During installation, select "Desktop development with C++" workload
+
+### Install the SDK
 
 ```bash
 pip install maq-rai-sdk
@@ -194,12 +215,16 @@ pip install maq-rai-sdk
 
 ```python
 from maq_rai_sdk import _client
-from azure.core.credentials import AzureKeyCredential
+
+# To get the endpoint URL:
+# 1. Navigate to your Function App in Azure Portal
+# 2. Go to "App Keys" in the left menu (under Settings)
+# 3. In the "Host keys" section, copy the "default" key value
+# 4. Use format: https://<your-function-app-name>.azurewebsites.net/api?code=<host-key>
  
 # Initialize the client
-client =  _client.MAQRAISDK(
-    endpoint="<Your function app endpoint>",
-    credential=AzureKeyCredential("your-key")
+client = _client.MAQRAISDK(
+    endpoint="<paste_your_function_app_host_key_url_here>"
 )
  
 # Review and update a prompt
@@ -219,15 +244,24 @@ print(testcases)
 ```
 
 ## Usage 2: Using Function App Endpoints (Direct API)
+![Function App Triggers](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/master/documentation-assets/function-app-triggers.png)
+
+![Get Function URL](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/master/documentation-assets/get-function-url.png)
 
 ```python
 import requests
 import json
 
-# Your deployed Function App URL
-function_app_url = "https://your-function-app-name.azurewebsites.net"
-reviewer_url = f"{function_app_url}/api/Reviewer_updater"
-testcase_url = f"{function_app_url}/api/Testcase_generator"
+# To get these URLs:
+# 1. Navigate to your Function App in Azure Portal
+# 2. Go to Functions in the left menu
+# 3. Click on each function trigger (Reviewer_updater and Testcase_generator)
+# 4. Go to "Code + Test" tab
+# 5. Click "Get function URL" button at the top
+# 6. Copy the "default (Function key)" URL and paste below
+
+reviewer_url = "<paste_reviewer_trigger_url_here>"
+testcase_url = "<paste_testcase_generator_trigger_url_here>"
 
 # Review and update a prompt
 reviewer_payload = {
@@ -256,7 +290,6 @@ print(testcases)
 
 - Python 3.10 or higher (< 3.13)
 - Function app endpoint
-- Function app key
 
 ## API Documentation
 
@@ -313,8 +346,16 @@ You have access to the customer database, product catalog, and order management 
 
 ```python
 # Set up API configuration
-reviewer_updater_url = "<Reviewer_endpoint>"
-testcase_generator_url = "<Testcase_generator_endpoint>"
+# To get these URLs:
+# 1. Navigate to your Function App in Azure Portal  
+# 2. Go to Functions in the left menu
+# 3. Click on each function trigger (Reviewer_updater and Testcase_generator)
+# 4. Go to "Code + Test" tab
+# 5. Click "Get function URL" button at the top
+# 6. Copy the "default (Function key)" URL and paste below
+
+reviewer_updater_url = "<paste_reviewer_trigger_url_here>"
+testcase_generator_url = "<paste_testcase_generator_trigger_url_here>"
 ```
 
 ### Step 3: Review the Initial Prompt

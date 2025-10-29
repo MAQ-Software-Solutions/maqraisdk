@@ -9,7 +9,6 @@ from typing import Any
 from typing_extensions import Self
 
 from azure.core import PipelineClient
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
@@ -25,8 +24,6 @@ class MAQRAISDK:  # pylint: disable=client-accepts-api-version-keyword
     :vartype reviewer: maq_rai_sdk.operations.ReviewerOperations
     :ivar testcase: TestcaseOperations operations
     :vartype testcase: maq_rai_sdk.operations.TestcaseOperations
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword endpoint: Service URL. Default value is
      "https://func-rai-agent-eus.azurewebsites.net/api".
     :paramtype endpoint: str
@@ -34,12 +31,11 @@ class MAQRAISDK:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(
         self,
-        credential: AzureKeyCredential,
         *,
         endpoint: str = "https://func-rai-agent-eus.azurewebsites.net/api",
         **kwargs: Any
     ) -> None:
-        self._config = MAQRAISDKConfiguration(credential=credential, **kwargs)
+        self._config = MAQRAISDKConfiguration(**kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
