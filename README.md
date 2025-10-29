@@ -159,6 +159,8 @@ Fill in the following details (you can customize names as needed):
 | `OpenAI_endpoint` | Your OpenAI endpoint URL | From OpenAI service → Keys and Endpoint |
 | `OpenAI_deployment` | Your deployment name | The deployment name you created in Step 2.3 |
 | `OpenAI_version` | Latest API version | Use the latest available version (e.g., `2025-02-01-preview`) |
+4. Click Save to apply the changes.
+5. ⚠️**Important**: After saving the configuration, restart the Function App to ensure the new settings are applied correctly.
 
 #### 4.3 Get OpenAI Service Details
 
