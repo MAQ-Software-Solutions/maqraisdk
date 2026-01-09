@@ -6,8 +6,12 @@ A Python SDK for reviewing and updating prompts, and generating test cases for f
 
 - **Prompt Reviewer**: Review and update prompts for better AI interactions
 - **Test Case Generator**: Generate comprehensive test cases from prompts
-- Support for various user categories and metrics
-- RAI compliance across Groundedness, XPIA, Jailbreak Prevention, and Harmful Content Prevention
+- Reviews and generates test cases for following user categories:
+    - Harmful Content
+    - Jail Break
+    - XPIA
+    - Groundedness
+- Generates metrices for each selected category
 
 ## Prerequisites and Deployment Guide
 
@@ -21,7 +25,7 @@ Before using the MAQ RAI SDK, follow these step-by-step instructions to set up t
 1. Navigate to [Azure AI Foundry](https://ai.azure.com)
 2. Sign in with your Azure credentials
 3. Go to **Model quota** section
-4. Request a quota increase for your preferred LLM model (we recommend GPT-4.1) to meet the minimum requirement of **50,000 TPM (Tokens Per Minute)**
+4. Request a quota increase for your preferred LLM model (we recommend GPT-4.1) to meet the minimum requirement of **50,000 TPM (Tokens Per Minute)** 
 
 ![OpenAI Quota Request](https://raw.githubusercontent.com/MAQ-Software-Solutions/maqraisdk/master/documentation-assets/openai-quota.png)
 
@@ -56,12 +60,12 @@ Before using the MAQ RAI SDK, follow these step-by-step instructions to set up t
 - **Subscription**: Select your subscription
 - **Resource Group**: Create new or select existing resource group
 - **Region**: Choose **East US 2** or **West US** (recommended for GPT-4.1 availability)
-- **Name**: Enter a unique name (e.g., `rai-openai-service-[yourname]`)
+- **Name**: Enter a unique name (e.g., `rai-openai-service-<yourname>`)
 - **Pricing Tier**: Select **Standard S0**
 
 **Networking**: Leave as default (All networks)
 
-**Tags**: Optional - add tags for resource management
+**Tags**(Optional): Add tags for resource management.
 
 Click **Review + Create** and then **Create**.
 
@@ -124,7 +128,6 @@ Fill in the following details (you can customize names as needed):
 - **Log Analytics Workspace Name**: Enter your desired name (e.g., `rai-agent-logs`)
 - **Hosting Plan Name**: Enter your desired name (e.g., `rai-agent-hosting`)
 - **Storage Account Name**: Enter your desired name (e.g., `raiagentstorageacct`)
-- **Package URI**: **⚠️ CRITICAL - DO NOT CHANGE THIS VALUE**
 
 **Managed Application Details:**
 - **Application Name**: Enter your desired application name
@@ -139,46 +142,114 @@ Fill in the following details (you can customize names as needed):
 
 **Deployment Time**: The deployment typically takes 5-10 minutes to complete.
 
-### Step 4: Configure OpenAI Integration
+### Step 4: Configure OpenAI Details in Key Vault
 
-#### 4.1 Navigate to Function App
+**Prerequisites**: Make sure you have **Key Vault Secret Officer** or higher role assigned to update secrets in the Key Vault. Without this role, you will not be able to create or modify secret versions.
 
-1. In the Azure Portal, navigate to **Resource Groups**
-2. Select the resource group where you deployed the RAI Agent
-3. Find and click on the **Function App** resource (name you provided during deployment)
+In this step, you will update all 3 OpenAI configurations in the Key Vault.
 
-#### 4.2 Configure Application Settings
+#### 4.1 Get OpenAI Details
 
-1. In your Function App, click on **Configuration** in the left menu under **Settings**
-2. Click on **Application settings** tab
-3. Add the following four new application settings by clicking **+ New application setting**:
+1. Navigate to your Azure OpenAI service resource 
+2. Click on **Keys and Endpoint** in the left menu
+3. Note down the following:
+   - **Endpoint** URL
+   - **Deployment Name** (from Step 2.3)
+   - **API Version** (e.g., `2025-02-01-preview` or latest available)
 
-| Setting Name | Value | Source |
-|--------------|-------|---------|
-| `OpenAI_Key` | Your OpenAI API key | From OpenAI service → Keys and Endpoint |
-| `OpenAI_endpoint` | Your OpenAI endpoint URL | From OpenAI service → Keys and Endpoint |
-| `OpenAI_deployment` | Your deployment name | The deployment name you created in Step 2.3 |
-| `OpenAI_version` | Latest API version | Use the latest available version (e.g., `2025-02-01-preview`) |
-4. Click Save to apply the changes.
-5. ⚠️**Important**: After saving the configuration, restart the Function App to ensure the new settings are applied correctly.
+#### 4.2 Update OpenAI Secrets in Key Vault
 
-#### 4.3 Get OpenAI Service Details
+1. Navigate to your Key Vault resource (created during deployment)
+2. Click on **Secrets** in the left menu under **Objects**
+3. You will see 3 secrets that need to be updated:
+   - `OpenAI-endpoint`
+   - `OpenAI-deployment` 
+   - `OpenAI-version`
 
-**To find your OpenAI service details:**
+4. For each of the 3 secrets, follow these steps:
+   - Click on the secret name
+   - **Disable** the current version (which contains default placeholder values)
+   - Click **+ New Version**
+   - Enter the **Secret Value**:
+     - For `OpenAI-endpoint` → Paste the Endpoint URL from step 4.1
+     - For `OpenAI-deployment` → Enter the deployment name you created in Step 2.3
+     - For `OpenAI-version` → Enter the latest API version (e.g., `2025-02-01-preview`)
+   - Make sure **Enabled** option is set to **Yes**
+   - Click **Create**
+
+### Step 5: OpenAI Authentication Methods
+
+Choose one of the following authentication methods based on your security requirements.
+
+#### 5.1 Managed Identity Based Authentication (Recommended)
+
+**Step 5.1.1: Assign Role to Function App**
+
+1. Navigate to your Azure OpenAI service resource
+2. Click on **Access control (IAM)** in the left menu
+3. Click on **+ Add** → **Add role assignment**
+4. In the **Role** tab, search for and select **Cognitive Services OpenAI User**
+5. Click **Next**
+6. In the **Members** tab:
+   - Select **Managed identity** option
+   - Click **+ Select members**
+   - In the flyout panel, search for your Function App name (the name you provided during deployment)
+   - Select the Function App from the results
+   - Click **Select**
+7. Click **Review + assign**
+
+**Step 5.1.2: Update Environment Variable**
+
+1. Navigate to your Function App (name you provided during deployment)
+2. Click on **Environment Variables** in the left menu under **Settings**
+3. Find and click on the `OpenAI_auth_type` variable
+4. Change the value to **`managed-identity`**
+5. Click **Apply** to save changes
+
+**Step 5.1.3: Restart Function App**
+
+1. In your Function App, click on **Overview** in the left menu
+2. Click on **Restart** at the top of the page
+3. Confirm the restart when prompted
+4. **Wait for at least 5 minutes** for the Function App to fully restart and apply the new environment variable settings
+
+#### 5.2 Key-Based Authentication
+
+**Step 5.2.1: Get OpenAI Key**
+
 1. Navigate to your Azure OpenAI service resource
 2. Click on **Keys and Endpoint** in the left menu
-3. Copy **KEY 1** for the `OpenAI_Key` setting
-4. Copy **Endpoint** for the `OpenAI_endpoint` setting
+3. Copy **KEY 1**
 
-#### 4.4 Save Configuration
+**Step 5.2.2: Update OpenAI Key Secret in Key Vault**
 
-1. After adding all four settings, click **Save** at the top
-2. Click **Continue** when prompted about restarting the app
-3. Wait for the configuration to be applied (usually 30-60 seconds)
+1. Navigate to your Key Vault resource (created during deployment)
+2. Click on **Secrets** in the left menu under **Objects**
+3. Click on the `OpenAI-Key` secret
+4. **Disable** the current version (which contains default placeholder values)
+5. Click **+ New Version**
+6. Paste the copied **KEY 1** value in the **Secret Value** field
+7. Make sure **Enabled** option is set to **Yes**
+8. Click **Create**
 
-#### 4.5 Verify Deployment
+**Step 5.2.3: Update Environment Variable**
 
-1. In your Function App, click on **Functions** in the left menu
+1. Navigate to your Function App (name you provided during deployment)
+2. Click on **Environment Variables** in the left menu under **Settings**
+3. Find and click on the `OpenAI_auth_type` variable
+4. Change the value to **`key-based`**
+5. Click **Apply** to save changes
+
+**Step 5.2.4: Restart Function App**
+
+1. In your Function App, click on **Overview** in the left menu
+2. Click on **Restart** at the top of the page
+3. Confirm the restart when prompted
+4. **Wait for at least 5 minutes** for the Function App to fully restart and apply the new environment variable settings
+
+### Step 6: Verify Deployment
+
+1. In your Function App, click on **Overview** in the left menu
 2. Verify you can see the following functions:
    - `Reviewer_updater`
    - `Testcase_generator`

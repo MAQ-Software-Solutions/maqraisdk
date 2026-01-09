@@ -38,6 +38,8 @@ setup(
         "types-PyYAML==6.0.12.20250516",
         "PyYAML==6.0.2",
         "onnxruntime==1.22.0",
+        "azure-core>=1.26.0",
+        "isodate>=0.6.1"
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
